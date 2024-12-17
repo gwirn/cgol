@@ -19,18 +19,12 @@ impl Population {
     }
 }
 impl Population {
-    pub fn calc_fitness(&mut self) {
-        // let x_len = 30;
-        // let y_len = 15;
-        let x_len = 5;
-        let y_len = 5;
-        let x_limit = x_len - 1;
-        let y_limit = y_len - 1;
+    pub fn calc_fitness(&mut self, x_len: &usize, y_len: &usize) {
         let n_epochs = 100;
         let pmsl = (self.genome_size as f32).sqrt() as usize;
 
-        let mut old_state = vec![vec![false; x_len]; y_len];
-        let mut new_state = vec![vec![false; x_len]; y_len];
+        let mut old_state = vec![vec![false; *x_len]; *y_len];
+        let mut new_state = vec![vec![false; *x_len]; *y_len];
         let individuums = self.genomes.chunks_exact(self.genome_size);
         if !individuums.remainder().is_empty()
             || self.genomes.len() / self.genome_size != self.fitness.len()
@@ -39,17 +33,15 @@ impl Population {
         }
         for (ci, i) in individuums.enumerate() {
             if ci > 0 {
-                reset_world(&mut old_state, &x_len, &y_len);
-                reset_world(&mut new_state, &x_len, &y_len);
+                reset_world(&mut old_state, x_len, y_len);
+                reset_world(&mut new_state, x_len, y_len);
             }
             draw_pattern(&mut old_state, &pmsl, i);
             let n_living = live_life(
                 &mut old_state,
                 &mut new_state,
-                &x_len,
-                &y_len,
-                &y_limit,
-                &x_limit,
+                x_len,
+                y_len,
                 &n_epochs,
                 false,
             );
@@ -95,7 +87,7 @@ impl Population {
             );
             if rng.gen::<f32>() > *mutation_prop {
                 let mut mut_position = rng.gen_range(0..self.genome_size);
-                mut_position = new_pop.len() - self.genome_size + mut_position;
+                mut_position += new_pop.len() - self.genome_size;
                 new_pop[mut_position] = !new_pop[mut_position];
             };
         }

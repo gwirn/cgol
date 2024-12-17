@@ -67,11 +67,11 @@ pub fn live_life(
     new_world: &mut [Vec<bool>],
     x_len: &usize,
     y_len: &usize,
-    y_lim: &usize,
-    x_lim: &usize,
     epochs: &i32,
     show_out: bool,
 ) -> i32 {
+    let y_lim = *x_len - 1;
+    let x_lim = *y_len - 1;
     let start_idx: usize = 0;
     let mut live_cells = 0;
     for i in 0..*epochs {
@@ -81,8 +81,8 @@ pub fn live_life(
                     old_world,
                     y_.try_into().unwrap(),
                     x_.try_into().unwrap(),
-                    *y_lim,
-                    *x_lim,
+                    y_lim,
+                    x_lim,
                 );
                 if old_world[y_][x_] {
                     live_cells += 1;
